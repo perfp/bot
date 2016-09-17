@@ -14,9 +14,17 @@ var connector = new builder.ChatConnector({
 });
 var bot = new builder.UniversalBot(connector);
 server.post('/api/messages', connector.listen());
-server.get('/', function(req, res){
+
+server.post('/', function(req, res, next){
     res.send("Bot running");
-})
+    next();
+});
+
+
+server.get('/', function(req, res, next){
+    res.send("Bot running");
+    next();
+});
 
 bot.dialog('/', function(session){
     session.send('Hello. world');
