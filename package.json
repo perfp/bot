@@ -1,0 +1,15 @@
+{
+  "name": "ruterbot",
+  "version": "1.0.0",
+  "description": "Skype-bot for å snakke med Ruter-API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "botbuilder": "^3.2.3",
+    "restify": "^4.1.1"
+  }
+}
