@@ -11,10 +11,11 @@ module.exports = function (connector) {
                     }, 
                     function (session, results){
                         var stops = ruterclient.findPlace(results.response, function(result){
-                            session.send('Jeg fant følgende: %s', result.map(function(item){ return item.number + ': ' + item.name; }).join(', '));
+                            session.send('Jeg fant følgende: ');
+                            result.map(function(item){ return item.number + ': ' + item.name; }).forEach(function(s){
+                                session.send('%s', s);
+                            })   
                         });
-                        
-
                     }]
     );
 
