@@ -1,5 +1,6 @@
 var restify = require('restify');
 var builder = require('botbuilder');
+var reisebot = require('./reisebot');
 
 // Setup server 
 var server = restify.createServer();
@@ -12,7 +13,8 @@ var connector = new builder.ChatConnector({
     appId: process.env.MICROSOFT_APP_ID,
     appPassword: process.env.MICROSOFT_APP_PASSWORD
 });
-var bot = new builder.UniversalBot(connector);
+
+
 server.post('/api/messages', connector.listen());
 
 server.post('/', function(req, res, next){
@@ -26,7 +28,6 @@ server.get('/', function(req, res, next){
     next();
 });
 
-bot.dialog('/', function(session){
-    session.send('Hello. world');
-});
+var reisebot = reisebot(connector);
+
 
