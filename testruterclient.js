@@ -2,7 +2,7 @@
 var ruterclient = require('./ruterclient');
 
 if (process.argv.length <= 2)
-{
+{   
     console.log('findPlace or stopvisit');
 }
 
