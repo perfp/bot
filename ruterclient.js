@@ -54,10 +54,52 @@ module.exports = {
                 callback(departures);
             });
         });
+
         
+    },
+
+    findTrip: function(travelFrom, travelTo, callback){
+        options.path = "/Travel/GetTravels?fromPlace=" + travelFrom + "&toPlace=" + travelTo + "&isafter=true";
+
+        var response = "";
+        var result = [];
+
+        http.get(options, function(res){
+            res.on('data', function (chunk){
+                response += chunk;
+            })
+            res.on('end', function(){
+                result = JSON.parse(response);
+                var departures = result.TravelProposals.slice(0,8).map(function(item){
+                    var travel = {
+                            'departureTime': createDateWithLocalTimeZone(item.DepartureTime),
+                            'arrivalTime': createDateWithLocalTimeZone(item.ArrivalTime),
+                            'itinerary':  []
+                    };
+                    item.Stages.forEach(function(element) {
+                        this.itinerary.push({
+                            'line': element.LineName,
+                            'departureTime': createDateWithLocalTimeZone( element.DepartureTime),
+                            'travelFrom': element.DepartureStop.Name,
+                            'travelTo': element.ArrivalStop.Name,
+                            'travelTime': element.TravelTime
+                        });
+                    }, travel);
+
+                    return travel;                    
+                });
+
+                callback(departures);
+            });
+        });
     }
 }
 
+function createDateWithLocalTimeZone(datestring){
+    var date = new Date(datestring);
+    date.setTime(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
+    return roundToMinute(date);
+}
 function roundToMinute(date){
     var timeUnit = 1000 * 60; // 1 minutt
     return new Date(Math.round(date.getTime() / timeUnit) * timeUnit);    

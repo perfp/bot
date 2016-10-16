@@ -7,7 +7,7 @@ if (process.argv.length <= 2)
 }
 
 if (process.argv[2] == 'findPlace'){
-    var result = ruterclient.findPlace('Tøyen', function(result){
+    var result = ruterclient.findPlace(process.argv[3] || 'Tøyen', function(result){
         console.log("Result: %s", result.length);
 
         result.forEach(function(item){
@@ -21,6 +21,16 @@ if (process.argv[2] == 'stopVisit'){
     var resutl = ruterclient.getDepartures('3010600', function(result){
          result.forEach(function(item){
             console.log('Name: ' + JSON.stringify(item));
+        });
+    });
+}   
+
+
+
+if (process.argv[2] == 'fromTo'){
+    var resutl = ruterclient.findTrip('3010200','3010600', function(result){
+         result.forEach(function(item){
+            console.log(JSON.stringify(item));
         });
     });
 }   
