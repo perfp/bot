@@ -33,6 +33,7 @@ module.exports = function (connector) {
         i = 2;
         next();
     });
+
     intents.matches(/reset/, function(session, args, next){
         session.userData = {};
         session.dialogData = {};
@@ -40,6 +41,10 @@ module.exports = function (connector) {
         next();
     });
 
+    intents.matches(/nodeversion/, function(session, args, next){        
+        session.send(`Node version: ${process.version}`);
+        next();
+    });
     intents.matches(/hei/, function(session,args, next){
         session.send("Hei. Hva kan jeg hjelpe deg med?");
     });
