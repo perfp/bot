@@ -27,10 +27,23 @@ module.exports = function (connector) {
     
     intents.matches(/hjem/, '/travel-home')
     intents.matches(/fra\s(.+)/, '/realtime-from');
-    intents.matches(/throw/, function(){
+    intents.matches(/throw/, function(session, args, next){
         const i = 1;
         i = 2;
-    })
+        next();
+    });
+    intents.matches(/reset/, function(session, args, next){
+        session.userData = {};
+        session.dialogData = {};
+        session.send("Session data cleared.");
+        next();
+    });
+
+    intents.matches(/hei/, function(session,args, next){
+        session.send("Hei. Hva kan jeg hjelpe deg med?");
+    });
+
+
 
     bot.dialog ('/', intents);
     realtimeFrom.configure(bot);
