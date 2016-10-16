@@ -28,6 +28,7 @@ module.exports = function (connector) {
     intents.matches(/hjem/, '/travel-home')
     intents.matches(/fra\s(.+)/, '/realtime-from');
     intents.matches(/throw/, function(session, args, next){
+        console.log(`Forcing exception: ${session.message.text}`);
         const i = 1;
         i = 2;
         next();
