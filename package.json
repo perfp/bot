@@ -8,6 +8,7 @@
   },
   "author": "",
   "license": "ISC",
+  "engines":{"node": "6.7.0"},
   "dependencies": {
     "botbuilder": "^3.2.3",
     "dateformat": "^1.0.12",
