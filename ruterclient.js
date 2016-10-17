@@ -1,16 +1,16 @@
 var http  = require('http');
 var utf8 = require('utf8');
 
-var options = {
-        host: 'reisapi.ruter.no',
-    };
+class RuterClient {
+    constructor(){
+        this.options = { host: 'reisapi.ruter.no' };
+    }
 
-module.exports = {
-    findPlace: function (name, callback) {
-        options.path = "/Place/GetPlaces?id=" + utf8.encode(name);
+    findPlace (name, callback) {
+        this.options.path = "/Place/GetPlaces?id=" + utf8.encode(name);
         var response = "";
         var result = [];
-        http.get(options, function (res) {
+        http.get(this.options, function (res) {
             console.log('Got response %s', res.statusCode);
 
             res.on('data', function (chunk)  {
@@ -19,7 +19,7 @@ module.exports = {
             res.on('end', function ()  {
                 result = JSON.parse(response);
                 var i = 1;
-                stops = result.map(function(value){
+                let stops = result.map(function(value){
                     return {
                         number: i++,
                         name: value.Name,
@@ -29,15 +29,15 @@ module.exports = {
                 callback(stops);
             });
         });
-    },
+    }
 
-    getDepartures: function(place, callback){
-        options.path = "/StopVisit/GetDepartures/" + place;
+    getDepartures (place, callback){
+        this.options.path = "/StopVisit/GetDepartures/" + place;
         //?datetime={datetime}&transporttypes={transporttypes}&linenames={linenames}
         var response = "";
         var result = [];
 
-        http.get(options, function(res){
+        http.get(this.options, function(res){
             res.on('data', function (chunk){
                 response += chunk;
             })
@@ -56,15 +56,15 @@ module.exports = {
         });
 
         
-    },
+    }
 
-    findTrip: function(travelFrom, travelTo, callback){
-        options.path = "/Travel/GetTravels?fromPlace=" + travelFrom + "&toPlace=" + travelTo + "&isafter=true";
+    findTrip (travelFrom, travelTo, callback){
+        this.options.path = "/Travel/GetTravels?fromPlace=" + travelFrom + "&toPlace=" + travelTo + "&isafter=true";
 
         var response = "";
         var result = [];
 
-        http.get(options, function(res){
+        http.get(this.options, function(res){
             res.on('data', function (chunk){
                 response += chunk;
             })
@@ -93,14 +93,17 @@ module.exports = {
             });
         });
     }
+
+    createDateWithLocalTimeZone(datestring){
+        var date = new Date(datestring);
+        date.setTime(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
+        return roundToMinute(date);
+    }
+    
+    roundToMinute(date){
+        var timeUnit = 1000 * 60; // 1 minutt
+        return new Date(Math.round(date.getTime() / timeUnit) * timeUnit);    
+    }
 }
 
-function createDateWithLocalTimeZone(datestring){
-    var date = new Date(datestring);
-    date.setTime(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
-    return roundToMinute(date);
-}
-function roundToMinute(date){
-    var timeUnit = 1000 * 60; // 1 minutt
-    return new Date(Math.round(date.getTime() / timeUnit) * timeUnit);    
-}
+module.exports = new RuterClient();
