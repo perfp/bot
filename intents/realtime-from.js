@@ -1,16 +1,14 @@
 
+var ruterclient = require('../ruterclient');
+var builder = require('botbuilder');
+var dateformat = require('dateformat');
+
 module.exports = {
     configure: function(bot){
-        bot.dialog('/realtime-from', [function (session, args, next){
-                            console.log('args: ' + JSON.stringify(args));
-                            session.dialogData.travelFrom = args.matched[1];   
-                            console.log(session.dialogData.travelFrom);
-                            next();
-                        }, 
-                        function (session, results, next){
-
-                            var from = session.dialogData.travelFrom;
-                            ruterclient.findPlace(travelFrom, function(result){
+        bot.dialog('/realtime-from', [                            
+                        function (session, args, next){
+                            var travelFrom = args.travelFrom;
+                            ruterclient.findPlace(travelFrom).then(function(result){
                                 var stops =  result.reduce(function(list,item){
                                     list[item.number] = { name: item.name, id: item.id};
                                     return list;
@@ -21,7 +19,7 @@ module.exports = {
                                 for (var stop in stops){
                                     response += stop + ": " + stops[stop].name + ", \n\n";
                                 }
-                                session.send('Jeg fant følgende: %s', response);
+                                session.send('Jeg fant følgende: \n\n%s', response);
                                 next();                        
                             });
                         },
@@ -30,7 +28,6 @@ module.exports = {
                         },
                         function (session, results, next){                        
                             var stop = session.dialogData.stops[results.response];
-                            //session.send('Du har valgt følgende: %s : %s', results.response, stop.name);          
                             ruterclient.getDepartures(stop.id, function(departures){
                                 var response = 'Dette er de neste avgangene fra ' + stop.name + ':\n\n';
                                 departures.forEach(function(d){    

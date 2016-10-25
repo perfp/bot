@@ -17,11 +17,11 @@ var connector = new builder.ChatConnector({
 
 server.post('/api/messages', connector.listen());
 
+
 server.post('/', function(req, res, next){
     res.send("Bot running");
     next();
 });
-
 
 server.get('/', function(req, res, next){
     res.send("Bot running");

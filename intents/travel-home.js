@@ -1,4 +1,5 @@
 var ruterclient = require("../ruterclient");
+var dateformat = require('dateformat');
 
 module.exports = {
     configure: function(bot, builder){
@@ -17,70 +18,48 @@ module.exports = {
             builder.Prompts.text(session, "Hvor er du nå?");
         },
         function(session, args, next){
-                ruterclient.findPlace(args.response, function(result){
-                var stops =  result.reduce(function(list,item){
-                        list[item.number] = { name: item.name, id: item.id};
-                        return list;
-                    }, {});
-                    session.dialogData.stops = stops;
-
-                    var response = '';
-                    for (var stop in stops){
-                        response += stop + ": " + stops[stop].name + ", \n\n";
-                    }
-                    session.send('Jeg fant følgende: %s', response);
-                    next();                        
+            session.beginDialog('/findPlace', args.response);        
+        },
+        function (session, results, next){                        
+            var stop = results.response;
+            session.send('Finner reise fra: %s til: %s',  stop.name, session.userData.home.name);          
+            ruterclient.findTrip(stop.id, session.userData.home.id).then(function(departures){
+                var response = 'Dette er de neste avgangene fra ' + stop.name + ':\n\n';
+                var n = 1;
+                departures.forEach(function(d){    
+                    
+                    d.itinerary.forEach(function(i){
+                        response += dateformat(i.departureTime, 'HH:MM') + ': ' + i.type;
+                        if (i.line){
+                            response += ': ' + i.line + ' ' + i.travelFrom + '-' + i.travelTo
+                        }
+                        response += ' => ' ;
+                    });
+                    response += 'Ankomst ' + dateformat(d.arrivalTime, 'HH:MM') +  '\n\n';
                 });
-            },
-            function (session){
-                builder.Prompts.text(session, "Velg nærmeste stoppested ved å skrive inn nummeret foran navnet.")
-            },
-            function (session, results, next){                        
-                var stop = session.dialogData.stops[results.response];
-                session.send('Finner reise fra: %s til: %s',  stop.name, session.userData.home.name);          
-                // ruterclient.getDepartures(stop.id, function(departures){
-                //     var response = 'Dette er de neste avgangene fra ' + stop.name + ':\n\n';
-                //     departures.forEach(function(d){    
-                //         response += dateformat(d.departureTime, 'HH:MM') + ': ' + d.line + '-' + d.destination + '\n\n';
-                //     });
+            
+            session.send(response);
+            next();                
+            });
+            
 
-                //     session.send(response);
-                //     next();
-                // })          
-            }]);
+        }]);
 
         bot.dialog('/profile', [
             function(session, args, next){
-                console.log("profile");
-                builder.Prompts.text(session, "Hvor bor du?");
-                
+                builder.Prompts.text(session, "Hvor bor du?");                
             }, 
             function(session, args, next){
-                ruterclient.findPlace(args.response, function(result){
-                var stops =  result.reduce(function(list,item){
-                        list[item.number] = { name: item.name, id: item.id};
-                        return list;
-                    }, {});
-                    session.dialogData.stops = stops;
-
-                    var response = '';
-                    for (var stop in stops){
-                        response += stop + ": " + stops[stop].name + ", \n\n";
-                    }
-                    session.send('Jeg fant følgende: %s', response);
-                    next();                        
-                });
+                session.beginDialog('/findPlace', args.response);
             },
-            function (session){
-                builder.Prompts.text(session, "Velg nærmeste stoppested ved å skrive inn nummeret foran navnet.")
-            },
-            function (session, results, next){                        
-                var stop = session.dialogData.stops[results.response];
-                session.send('Du har valgt følgende: %s : %s', results.response, stop.name);
-                session.userData.home = stop;
-                session.endDialog();                                  
+            function(session, args, next){
+                console.log('Home: ' + args.response);
+                session.userData.home = args.response;
+                next();
             }
+            
         ]);
+
     }
 }
  

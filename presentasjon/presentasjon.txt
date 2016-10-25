@@ -1,0 +1,35 @@
+1 - Introduksjon 1 minutt
+	Per-Frode Pedersen
+	
+2 - Skype bot demo 3 minutter
+	Hilse pent
+	Finn reise fra og til
+
+3 - Bot-anatomi - 2 minutter
+	Vise strukturen i en bot
+	App / restify
+	BotBuilder
+	ChatConnector / ConsoleConnector
+
+4 - Hosting og registrering 3 minutter 
+	Azure: https://portal.azure.com/#resource/subscriptions/b180251d-6327-4334-ae6f-f858dfd92b4c/resourceGroups/ruterbot/providers/Microsoft.Web/sites/RuterBot
+	Bot registration: https://dev.botframework.com/bots?id=ReiseBot
+	Deployment
+
+5 - Bot framework 6 minutter 
+	Intents
+	Dialogs
+	State
+
+8 - Skype bot demo 3 minutter
+	Vise reise hjem
+
+9 - Oppsummering 1 minutt
+	Bot framework
+	Intents
+	Dialog
+	State
+
+	Veien videre
+	LUIS
+	

@@ -3,11 +3,11 @@ var ruterclient = require('./ruterclient');
 
 if (process.argv.length <= 2)
 {   
-    console.log('findPlace or stopvisit');
+    console.log('findPlace or stopvisit or fromTo');
 }
 
 if (process.argv[2] == 'findPlace'){
-    var result = ruterclient.findPlace(process.argv[3] || 'Tøyen', function(result){
+    var result = ruterclient.findPlace(process.argv[3] || 'Tøyen').then(function(result){
         console.log("Result: %s", result.length);
 
         result.forEach(function(item){
@@ -25,10 +25,8 @@ if (process.argv[2] == 'stopVisit'){
     });
 }   
 
-
-
 if (process.argv[2] == 'fromTo'){
-    var resutl = ruterclient.findTrip('3010200','3010600', function(result){
+    var resutl = ruterclient.findTrip(process.argv[3] || '3010200', process.argv[4] || '3010600').then(function(result){
          result.forEach(function(item){
             console.log(JSON.stringify(item));
         });
